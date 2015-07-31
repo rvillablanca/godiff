@@ -7,7 +7,7 @@ import (
 
 func CompareFiles(file1, file2 string) (result bool, err error) {
 	size := 1024 * 8
-	var buffer1, buffer2 [size]uint8
+	buffer1, buffer2 := make([]byte, size), make([]byte, size)
 	
 	f1, err := os.Open(file1)
 	if err != nil {
