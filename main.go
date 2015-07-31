@@ -9,7 +9,7 @@ import (
 
 func main() {
 	fmt.Println("Argumentos:", os.Args)
-	result, err := diff.CompareFiles(os.Args[0], os.Args[1])
+	result, err := diff.CompareFiles(os.Args[1], os.Args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
