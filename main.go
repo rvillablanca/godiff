@@ -4,29 +4,42 @@ import (
 	"fmt"
 	"github.com/rvillablanca/godiff/diff"
 	"os"
-	"log"
-	"errors"
 )
 
 func main() {
 	args := os.Args
-	err := checkArguments(args)
-	if err != nil {
+	valid := checkArguments(args)
+	if !valid {
+		fmt.Println("Número de parámetros incorrecto")
 		printUsages()
 		return
 	}
-	result, err := diff.CompareFiles(os.Args[1], os.Args[2])
+	dir1 := os.Args[1]
+	dir2 := os.Args[2]
+
+	isDir1, err := diff.CheckDirectory(dir1)
 	if err != nil {
-		log.Fatal(err)
+		return
+	}
+	isDir2, err := diff.CheckDirectory(dir2)
+	if err != nil {
+		return
+	}
+	if !isDir1 || !isDir2 {
+		fmt.Println("Todos los argumentos deben ser directorios")
+		return
+	}
+
+	result, err := diff.CompareFiles(dir1, dir2)
+	if err != nil {
+		fmt.Println(err)
 	}
 	fmt.Println("Resultado", result)
 }
 
-func checkArguments(args []string) error {
-	if (len(args) != 4) {
-		return errors.New("Número de parámetros incorrecto")
-	}
-	return nil
+func checkArguments(args []string) bool {
+	fmt.Println("Arg: ", args, len(args))
+	return len(args) == 4
 }
 
 func printUsages() {
