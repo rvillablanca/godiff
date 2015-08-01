@@ -5,7 +5,6 @@ import (
 	"github.com/rvillablanca/godiff/diff"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 func main() {
@@ -45,7 +44,6 @@ func main() {
 
 	oldFiles := []string{}
 	newFiles := []string{}
-	time.Sleep(5 * time.Second)
 	fmt.Println("Buscando archivos en directorios...")
 	oldFiles = diff.FindFilesIn(oldFiles, dir1)
 	newFiles = diff.FindFilesIn(newFiles, dir2)
