@@ -28,10 +28,13 @@ func CompareFiles(file1, file2 string) (result bool, err error) {
 	if err != nil {
 		return
 	}
+	defer f1.Close()
+
 	f2, err := os.Open(file2)
 	if err != nil {
 		return
 	}
+	defer f2.Close()
 
 	n1, err := f1.Read(buffer1)
 	if err != nil {
