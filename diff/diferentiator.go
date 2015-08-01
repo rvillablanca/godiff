@@ -4,9 +4,13 @@ import (
 	"os"
 	"bytes"
 	"path/filepath"
+	"path"
 )
 
 func CheckDirectory(dirname string) (result bool, err error) {
+	if !path.IsAbs(dirname) {
+		return
+	}
 	f, err := os.Open(dirname)
 	if err != nil {
 		return
@@ -67,6 +71,7 @@ func FindFilesIn(list []string, dirname string) []string  {
 		}
 		return nil
 	}
+
 	filepath.Walk(dirname, walkFunc)
 	return list
 }
