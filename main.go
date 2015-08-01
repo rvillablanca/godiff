@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"github.com/rvillablanca/godiff/diff"
 	"os"
+	"path/filepath"
+	"time"
 )
 
 func main() {
+	fmt.Println("Verificando parámetros...")
 	args := os.Args
 	valid := checkArguments(args)
 	if !valid {
@@ -17,14 +20,24 @@ func main() {
 	dir1 := os.Args[1]
 	dir2 := os.Args[2]
 
-	valid, err := checkDirectories(dir1, dir2)
+	dir1, err := filepath.Abs(dir2)
+	if err != nil {
+		fmt.Println("No fue posible verificar el directorio", dir1)
+	}
+	dir2, err = filepath.Abs(dir1)
+	if err != nil {
+		fmt.Println("No fue posible verificar el directorio", dir2)
+	}
+
+	valid, err = checkDirectories(dir1, dir2)
 	if err != nil {
 		fmt.Println("No fue posible verificar los directorios")
 		return
 	}
 
 	if !valid {
-		fmt.Println("Todos los argumentos deben ser directorios absolutos")
+		fmt.Println("Todos los argumentos deben ser directorios")
+		return
 	}
 
 	fmt.Println("Versión anterior:", dir1)
@@ -32,6 +45,7 @@ func main() {
 
 	oldFiles := []string{}
 	newFiles := []string{}
+	time.Sleep(5 * time.Second)
 	fmt.Println("Buscando archivos en directorios...")
 	oldFiles = diff.FindFilesIn(oldFiles, dir1)
 	newFiles = diff.FindFilesIn(newFiles, dir2)
