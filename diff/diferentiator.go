@@ -3,6 +3,7 @@ package diff
 import (
 	"os"
 	"bytes"
+	"path/filepath"
 )
 
 func CheckDirectory(dirname string) (result bool, err error) {
@@ -54,7 +55,17 @@ func CompareFiles(file1, file2 string) (result bool, err error) {
 	return
 }
 
-func findFilesIn(file *(os.File)) []string {
-	files := make([]string, 1)
-	return files
+func FindFilesIn(list []string, dirname string)   {
+	walkFunc := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if info.IsDir() {
+			FindFilesIn(list, info.Name())
+		} else {
+			list = append(list, info.Name())
+		}
+		return nil
+	}
+	filepath.Walk(dirname, walkFunc)
 }
