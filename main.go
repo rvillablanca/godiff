@@ -39,6 +39,17 @@ func main() {
 	fmt.Println("Buscando archivos en directorios...")
 	oldFiles = diff.FindFilesIn(oldFiles, conf.oldDir)
 	newFiles = diff.FindFilesIn(newFiles, conf.newDir)
+
+    toAdd := []string{}
+    toRemove := []string{}
+    toModify := []string{}
+
+    for _, oldFile := range oldFiles {
+		for _, newFile := range newFiles {
+			
+		} 
+	}
+    
 }
 
 func generateAbsoluteDirectories() (conf diffconf, err error) {
