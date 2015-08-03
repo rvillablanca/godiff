@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/rvillablanca/godiff/diff"
 	"os"
 	"path/filepath"
 	"errors"
+	"github.com/rvillablanca/godiff/diff"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type diffconf struct {
@@ -14,10 +15,16 @@ type diffconf struct {
 	destDir string
 }
 
-func main() {
-	fmt.Println("Verificando parámetros...")
+var (
+	oldDir = kingpin.Arg("old", "Fuentes antiguos").Required().String()
+	newDir = kingpin.Arg("new", "Fuentes nuevos").Required().String()
+	destDir = kingpin.Arg("dest", "Destino del parche").Required().String()
+)
 
-	conf, err := validateArguments(os.Args)
+func main() {
+	kingpin.Parse()
+
+	conf, err := generateAbsoluteDirectories()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -28,46 +35,32 @@ func main() {
 
 	oldFiles := []string{}
 	newFiles := []string{}
+
 	fmt.Println("Buscando archivos en directorios...")
 	oldFiles = diff.FindFilesIn(oldFiles, conf.oldDir)
 	newFiles = diff.FindFilesIn(newFiles, conf.newDir)
-
 }
 
-func validateArguments(args []string) (conf diffconf, err error) {
-	valid := len(args) == 4
-	if !valid {
-		err = errors.New("Número de parámetros incorrecto")
-		return
-	}
-
-	dir1 := args[1]
-	dir2 := args[2]
-	dir3 := args[3]
-
-	dir1, err = filepath.Abs(dir2)
+func generateAbsoluteDirectories() (conf diffconf, err error) {
+	dir1, err := filepath.Abs(*oldDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar el directorio" + dir1)
+		err = errors.New("No fue posible verificar el directorio" + *oldDir)
 		return
 	}
-	dir2, err = filepath.Abs(dir1)
+	dir2, err := filepath.Abs(*newDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar el directorio" + dir2)
+		err = errors.New("No fue posible verificar el directorio" + *newDir)
 		return
 	}
-
-	valid, err = checkDirectories(dir1, dir2)
+	valid, err := checkDirectories(dir1, dir2)
 	if err != nil {
 		err = errors.New("No fue posible verificar los directorios")
 		return
-	}
-
-	if !valid {
+	} else if !valid {
 		err = errors.New("Todos los argumentos deben ser directorios")
 		return
 	}
-
-	return diffconf{dir1, dir2, dir3}, nil
+	return diffconf{dir1, dir2, *destDir}, nil
 }
 
 func checkDirectories(dir1, dir2 string) (bool, error) {
@@ -98,9 +91,4 @@ func checkDirectory(dirname string) (result bool, err error) {
 
 	result = fi.Mode().IsDir()
 	return
-}
-
-func printUsages() {
-	fmt.Println("Uso: ")
-	fmt.Println(os.Args[0], "<old-sources> <new-sources> <destination>")
 }
