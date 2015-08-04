@@ -44,12 +44,30 @@ func main() {
     toRemove := []string{}
     toModify := []string{}
 
+	oldIteration:
     for _, oldFile := range oldFiles {
 		for _, newFile := range newFiles {
-			
-		} 
+			if newFile == oldFile {
+				toModify = append(toModify, oldFile)
+				continue oldIteration
+			}
+		}
+		toRemove = append(toRemove, oldFile)
 	}
-    
+	
+	newIteration:
+	for _, newFile := range newFiles {
+		for _, modifyFile := range toModify {
+			if newFile == modifyFile {
+				continue newIteration
+			}
+		}
+		toAdd = append(toAdd, newFile)
+	}
+	
+	fmt.Printf("Eliminar: %v\n", toRemove)
+	fmt.Printf("Modificar: %v\n", toModify)
+	fmt.Printf("Agregar: %v\n", toAdd)
 }
 
 func generateAbsoluteDirectories() (conf diffconf, err error) {
@@ -63,9 +81,14 @@ func generateAbsoluteDirectories() (conf diffconf, err error) {
 		err = errors.New("No fue posible verificar el directorio" + *newDir)
 		return
 	}
-	valid, err := checkDirectories(dir1, dir2)
+	dir3, err := filepath.Abs(*destDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar los directorios")
+		err = errors.New("No fue posible verificar el directorio" + *destDir)
+		return
+	}
+	
+	valid, err := checkDirectories(dir1, dir2, dir3)
+	if err != nil {
 		return
 	} else if !valid {
 		err = errors.New("Todos los argumentos deben ser directorios")
@@ -74,17 +97,12 @@ func generateAbsoluteDirectories() (conf diffconf, err error) {
 	return diffconf{dir1, dir2, *destDir}, nil
 }
 
-func checkDirectories(dir1, dir2 string) (bool, error) {
-	isDir1, err := checkDirectory(dir1)
-	if err != nil {
-		return false, err
-	}
-	isDir2, err := checkDirectory(dir2)
-	if err != nil {
-		return false, err
-	}
-	if !isDir1 || !isDir2 {
-		return false, nil
+func checkDirectories(dirs... string) (bool, error) {
+	for _, v := range dirs {
+		exist, err := checkDirectory(v)
+		if err != nil || !exist {
+			return false, fmt.Errorf("Directorio %v no existe", v)
+		}
 	}
 	return true, nil
 }
