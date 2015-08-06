@@ -42,13 +42,11 @@ func main() {
 
     toAdd := []string{}
     toRemove := []string{}
-    toModify := []string{}
 
 	oldIteration:
     for _, oldFile := range oldFiles {
 		for _, newFile := range newFiles {
 			if newFile == oldFile {
-				toModify = append(toModify, oldFile)
 				continue oldIteration
 			}
 		}
@@ -57,8 +55,8 @@ func main() {
 	
 	newIteration:
 	for _, newFile := range newFiles {
-		for _, modifyFile := range toModify {
-			if newFile == modifyFile {
+		for _, oldFile := range oldFiles {
+			if newFile == oldFile {
 				continue newIteration
 			}
 		}
@@ -66,7 +64,6 @@ func main() {
 	}
 	
 	fmt.Printf("Eliminar: %v\n", toRemove)
-	fmt.Printf("Modificar: %v\n", toModify)
 	fmt.Printf("Agregar: %v\n", toAdd)
 }
 
