@@ -40,19 +40,21 @@ func main() {
 	oldFiles = diff.FindFilesIn(oldFiles, conf.oldDir)
 	newFiles = diff.FindFilesIn(newFiles, conf.newDir)
 
-    toAdd := []string{}
-    toRemove := []string{}
+  toAdd := []string{}
+  toRemove := []string{}
 
+	//Archivos a eliminar
 	oldIteration:
     for _, oldFile := range oldFiles {
-		for _, newFile := range newFiles {
-			if newFile == oldFile {
-				continue oldIteration
+			for _, newFile := range newFiles {
+				if newFile == oldFile {
+					continue oldIteration
+				}
 			}
+			toRemove = append(toRemove, oldFile)
 		}
-		toRemove = append(toRemove, oldFile)
-	}
-	
+
+  //Archivos que hay que agregar
 	newIteration:
 	for _, newFile := range newFiles {
 		for _, oldFile := range oldFiles {
@@ -62,7 +64,21 @@ func main() {
 		}
 		toAdd = append(toAdd, newFile)
 	}
-	
+
+	//Se quitan los archivos a eliminar de la lista de archivos a comparar.
+	loop:
+	for i := 0; i < len(oldFiles); i++ {
+	    old := oldFiles[i]
+	    for _, rem := range toRemove {
+	        if old == rem {
+	            oldFiles = append(oldFiles[:i], oldFiles[i + 1:]...)
+	            i--
+	            continue loop
+	        }
+	    }
+	}
+
+	fmt.Printf("Comparar: %v\n", oldFiles)
 	fmt.Printf("Eliminar: %v\n", toRemove)
 	fmt.Printf("Agregar: %v\n", toAdd)
 }
@@ -83,7 +99,7 @@ func generateAbsoluteDirectories() (conf diffconf, err error) {
 		err = errors.New("No fue posible verificar el directorio" + *destDir)
 		return
 	}
-	
+
 	valid, err := checkDirectories(dir1, dir2, dir3)
 	if err != nil {
 		return
