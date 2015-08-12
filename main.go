@@ -22,6 +22,7 @@ var (
 )
 
 func main() {
+
 	kingpin.Parse()
 
 	conf, err := generateAbsoluteDirectories()
