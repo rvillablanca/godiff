@@ -1,23 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
 	"errors"
+	"fmt"
 	"github.com/rvillablanca/godiff/diff"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"os"
+	"path/filepath"
 )
 
 type diffconf struct {
-	oldDir string
-	newDir string
+	oldDir  string
+	newDir  string
 	destDir string
 }
 
 var (
-	oldDir = kingpin.Arg("old", "Fuentes antiguos").Required().String()
-	newDir = kingpin.Arg("new", "Fuentes nuevos").Required().String()
+	oldDir  = kingpin.Arg("old", "Fuentes antiguos").Required().String()
+	newDir  = kingpin.Arg("new", "Fuentes nuevos").Required().String()
 	destDir = kingpin.Arg("dest", "Destino del parche").Required().String()
 )
 
@@ -41,22 +41,22 @@ func main() {
 	oldFiles = diff.FindFilesIn(oldFiles, conf.oldDir)
 	newFiles = diff.FindFilesIn(newFiles, conf.newDir)
 
-  toAdd := []string{}
-  toRemove := []string{}
+	toAdd := []string{}
+	toRemove := []string{}
 
 	//Archivos a eliminar
-	oldIteration:
-    for _, oldFile := range oldFiles {
-			for _, newFile := range newFiles {
-				if newFile == oldFile {
-					continue oldIteration
-				}
+oldIteration:
+	for _, oldFile := range oldFiles {
+		for _, newFile := range newFiles {
+			if newFile == oldFile {
+				continue oldIteration
 			}
-			toRemove = append(toRemove, oldFile)
 		}
+		toRemove = append(toRemove, oldFile)
+	}
 
-  //Archivos que hay que agregar
-	newIteration:
+	//Archivos que hay que agregar
+newIteration:
 	for _, newFile := range newFiles {
 		for _, oldFile := range oldFiles {
 			if newFile == oldFile {
@@ -67,16 +67,16 @@ func main() {
 	}
 
 	//Se quitan los archivos a eliminar de la lista de archivos a comparar.
-	loop:
+loop:
 	for i := 0; i < len(oldFiles); i++ {
-	    old := oldFiles[i]
-	    for _, rem := range toRemove {
-	        if old == rem {
-	            oldFiles = append(oldFiles[:i], oldFiles[i + 1:]...)
-	            i--
-	            continue loop
-	        }
-	    }
+		old := oldFiles[i]
+		for _, rem := range toRemove {
+			if old == rem {
+				oldFiles = append(oldFiles[:i], oldFiles[i+1:]...)
+				i--
+				continue loop
+			}
+		}
 	}
 
 	fmt.Printf("Comparar: %v\n", oldFiles)
@@ -111,7 +111,7 @@ func generateAbsoluteDirectories() (conf diffconf, err error) {
 	return diffconf{dir1, dir2, *destDir}, nil
 }
 
-func checkDirectories(dirs... string) (bool, error) {
+func checkDirectories(dirs ...string) (bool, error) {
 	for _, v := range dirs {
 		exist, err := checkDirectory(v)
 		if err != nil || !exist {

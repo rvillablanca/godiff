@@ -1,10 +1,10 @@
 package diff
 
 import (
-	"os"
 	"bytes"
-	"path/filepath"
 	"io"
+	"os"
+	"path/filepath"
 )
 
 func CompareFiles(file1, file2 string) (bool, error) {
@@ -22,7 +22,7 @@ func CompareFiles(file1, file2 string) (bool, error) {
 		return false, err
 	}
 	defer f2.Close()
-	
+
 	for {
 		// Si hay error, se retorna
 		n1, err := f1.Read(buffer1)
@@ -33,7 +33,7 @@ func CompareFiles(file1, file2 string) (bool, error) {
 		if err2 != nil && err2 != io.EOF {
 			return false, err2
 		}
-		
+
 		// Se llegó al final de ambos archivos.
 		if err == io.EOF && err == err2 && n1 == n2 {
 			return true, nil
@@ -41,7 +41,7 @@ func CompareFiles(file1, file2 string) (bool, error) {
 
 		// Se leyeron distintas cantidades, se llegó al final de uno.
 		if n1 != n2 {
-		 	return false, nil
+			return false, nil
 		}
 
 		result := bytes.Equal(buffer1, buffer2)
@@ -51,7 +51,7 @@ func CompareFiles(file1, file2 string) (bool, error) {
 	}
 }
 
-func FindFilesIn(list []string, dirname string) []string  {
+func FindFilesIn(list []string, dirname string) []string {
 	walkFunc := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
