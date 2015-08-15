@@ -56,8 +56,9 @@ func FindFilesIn(list []string, dirname string) []string {
 		if err != nil {
 			return nil
 		}
+
 		if !info.IsDir() {
-			list = append(list, info.Name())
+			list = append(list, path)
 		}
 		return nil
 	}
