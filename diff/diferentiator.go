@@ -54,11 +54,15 @@ func CompareFiles(file1, file2 string) (bool, error) {
 func FindFilesIn(list []string, dirname string) []string {
 	walkFunc := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return nil
+			return err
 		}
 
 		if !info.IsDir() {
-			list = append(list, path)
+			p, err := filepath.Rel(dirname, path)
+			if err == nil {
+					list = append(list, p)
+			}
+			return err
 		}
 		return nil
 	}

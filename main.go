@@ -9,12 +9,6 @@ import (
 	"path/filepath"
 )
 
-type diffconf struct {
-	oldDir  string
-	newDir  string
-	destDir string
-}
-
 var (
 	oldDir  = kingpin.Arg("old", "Fuentes antiguos").Required().String()
 	newDir  = kingpin.Arg("new", "Fuentes nuevos").Required().String()
@@ -25,21 +19,21 @@ func main() {
 
 	kingpin.Parse()
 
-	conf, err := generateAbsoluteDirectories()
+	err := validateDirectories()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("Versión anterior:", conf.oldDir)
-	fmt.Println("Versión nueva:", conf.newDir)
+	fmt.Println("Versión anterior:", *oldDir)
+	fmt.Println("Versión nueva:", *newDir)
 
 	oldFiles := []string{}
 	newFiles := []string{}
 
 	fmt.Println("Buscando archivos en directorios...")
-	oldFiles = diff.FindFilesIn(oldFiles, conf.oldDir)
-	newFiles = diff.FindFilesIn(newFiles, conf.newDir)
+	oldFiles = diff.FindFilesIn(oldFiles, *oldDir)
+	newFiles = diff.FindFilesIn(newFiles, *newDir)
 
 	toAdd := []string{}
 	toRemove := []string{}
@@ -84,7 +78,7 @@ loop:
 	fmt.Printf("Agregar: %v\n", toAdd)
 }
 
-func generateAbsoluteDirectories() (conf diffconf, err error) {
+func validateDirectories() (err error) {
 	dir1, err := filepath.Abs(*oldDir)
 	if err != nil {
 		err = errors.New("No fue posible verificar el directorio" + *oldDir)
@@ -108,7 +102,7 @@ func generateAbsoluteDirectories() (conf diffconf, err error) {
 		err = errors.New("Todos los argumentos deben ser directorios")
 		return
 	}
-	return diffconf{dir1, dir2, *destDir}, nil
+	return nil
 }
 
 func checkDirectories(dirs ...string) (bool, error) {
