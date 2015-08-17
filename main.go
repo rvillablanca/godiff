@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/rvillablanca/godiff/diff"
-	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"path/filepath"
+
+	"github.com/rvillablanca/godiff/diff"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -76,6 +77,23 @@ loop:
 	fmt.Printf("Comparar: %v\n", oldFiles)
 	fmt.Printf("Eliminar: %v\n", toRemove)
 	fmt.Printf("Agregar: %v\n", toAdd)
+
+	toReplace := []string{}
+
+	fmt.Println("Comparando archivos...")
+	for _, v := range oldFiles {
+		v1 := filepath.Join(*oldDir, v)
+		v2 := filepath.Join(*newDir, v)
+		equal, err := diff.CompareFiles(v1, v2)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if !equal {
+			toReplace = append(toReplace, v2)
+		}
+	}
+	fmt.Println("Reemplazar:", toReplace)
 }
 
 func validateDirectories() (err error) {
