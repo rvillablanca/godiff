@@ -91,14 +91,21 @@ loop:
 			return
 		}
 		if !equal {
-			toReplace = append(toReplace, v2)
+			toReplace = append(toReplace, v)
 		}
 	}
 	fmt.Println("Reemplazar:", toReplace)
 
   for _, file := range toAdd {
-		fmt.Println("Copiando nuevo archivo: ", file)
-		err = CopyFile(filepath.Join(*newDir, file), filepath.Join(*destDir, file))
+		srcf := filepath.Join(*newDir, file)
+		dstf := filepath.Join(*destDir, file)
+		dstdirs := filepath.Dir(dstf)
+		err = os.MkdirAll(dstdirs, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = Copy(srcf, dstf)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -106,8 +113,15 @@ loop:
 	}
 
 	for _, file := range toReplace {
-		fmt.Println("Reemplazando archivo: ", file)
-		err = CopyFile(file, filepath.Join(*destDir, file))
+		srcf := filepath.Join(*newDir, file)
+		dstf := filepath.Join(*destDir, file)
+		dstdirs := filepath.Dir(dstf)
+		err = os.MkdirAll(dstdirs, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = Copy(srcf, dstf)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -169,55 +183,29 @@ func checkDirectory(dirname string) (result bool, err error) {
 	return
 }
 
-// CopyFile copies a file from src to dst. If src and dst files exist, and are
-// the same, then return success. Otherise, attempt to create a hard link
-// between the two files. If that fail, copy the file contents from src to dst.
-func CopyFile(src, dst string) (err error) {
-    sfi, err := os.Stat(src)
-    if err != nil {
-        return
-    }
-    if !sfi.Mode().IsRegular() {
-        // cannot copy non-regular files (e.g., directories,
-        // symlinks, devices, etc.)
-        return fmt.Errorf("CopyFile: non-regular source file %s (%q)", sfi.Name(), sfi.Mode().String())
-    }
-    dfi, err := os.Stat(dst)
-    if err != nil {
-        if !os.IsNotExist(err) {
-            return
-        }
-    } else {
-        if !(dfi.Mode().IsRegular()) {
-            return fmt.Errorf("CopyFile: non-regular destination file %s (%q)", dfi.Name(), dfi.Mode().String())
-        }
-        if os.SameFile(sfi, dfi) {
-            return
-        }
-    }
-    err = copyFileContents(src, dst)
-    return
-}
+func Copy(src, dst string) error {
+  src_file, err := os.Open(src)
+  if err != nil {
+    return err
+  }
+  defer src_file.Close()
 
-func copyFileContents(src, dst string) (err error) {
-    in, err := os.Open(src)
-    if err != nil {
-        return
-    }
-    defer in.Close()
-    out, err := os.Create(dst)
-    if err != nil {
-        return
-    }
-    defer func() {
-        cerr := out.Close()
-        if err == nil {
-            err = cerr
-        }
-    }()
-    if _, err = io.Copy(out, in); err != nil {
-        return
-    }
-    err = out.Sync()
-    return
+  src_file_stat, err := src_file.Stat()
+  if err != nil {
+    return err
+  }
+
+  if !src_file_stat.Mode().IsRegular() {
+    return fmt.Errorf("%s is not a regular file", src)
+  }
+
+	fmt.Println("Creando archivo", dst)
+  dst_file, err := os.Create(dst)
+  if err != nil {
+    return err
+  }
+	fmt.Println("Archivo creado", dst)
+  defer dst_file.Close()
+  _, err = io.Copy(dst_file, src_file)
+	return err
 }
