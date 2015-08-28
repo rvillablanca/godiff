@@ -199,12 +199,10 @@ func Copy(src, dst string) error {
     return fmt.Errorf("%s is not a regular file", src)
   }
 
-	fmt.Println("Creando archivo", dst)
   dst_file, err := os.Create(dst)
   if err != nil {
     return err
   }
-	fmt.Println("Archivo creado", dst)
   defer dst_file.Close()
   _, err = io.Copy(dst_file, src_file)
 	return err
