@@ -46,7 +46,7 @@ func CompareFiles(file1, file2 string) (bool, error) {
 
 		result := bytes.Equal(buffer1, buffer2)
 		if !result {
-			return true, nil
+			return false, nil
 		}
 	}
 }
