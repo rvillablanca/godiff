@@ -41,7 +41,7 @@ func main() {
 	toRemove := []string{}
 
 	//Archivos a eliminar
-oldIteration:
+	oldIteration:
 	for _, oldFile := range oldFiles {
 		for _, newFile := range newFiles {
 			if newFile == oldFile {
@@ -52,7 +52,7 @@ oldIteration:
 	}
 
 	//Archivos que hay que agregar
-newIteration:
+	newIteration:
 	for _, newFile := range newFiles {
 		for _, oldFile := range oldFiles {
 			if newFile == oldFile {
@@ -63,7 +63,7 @@ newIteration:
 	}
 
 	//Se quitan los archivos a eliminar de la lista de archivos a comparar.
-loop:
+	loop:
 	for i := 0; i < len(oldFiles); i++ {
 		old := oldFiles[i]
 		for _, rem := range toRemove {
@@ -96,7 +96,7 @@ loop:
 	}
 	fmt.Println("Reemplazar:", toReplace)
 
-  for _, file := range toAdd {
+  	for _, file := range toAdd {
 		srcf := filepath.Join(*newDir, file)
 		dstf := filepath.Join(*destDir, file)
 		dstdirs := filepath.Dir(dstf)
