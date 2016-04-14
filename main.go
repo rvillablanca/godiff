@@ -27,9 +27,6 @@ func main() {
 		return
 	}
 
-	fmt.Println("Versión anterior:", *oldDir)
-	fmt.Println("Versión nueva:", *newDir)
-
 	oldFiles := []string{}
 	newFiles := []string{}
 
@@ -75,10 +72,6 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Comparar: %v\n", oldFiles)
-	fmt.Printf("Eliminar: %v\n", toRemove)
-	fmt.Printf("Agregar: %v\n", toAdd)
-
 	toReplace := []string{}
 
 	fmt.Println("Comparando archivos...")
@@ -94,7 +87,6 @@ func main() {
 			toReplace = append(toReplace, v)
 		}
 	}
-	fmt.Println("Reemplazar:", toReplace)
 
   	for _, file := range toAdd {
 		srcf := filepath.Join(*newDir, file)
@@ -126,6 +118,11 @@ func main() {
 			fmt.Println(err)
 			return
 		}
+	}
+	fmt.Println("Eliminar los archivos:")
+	for _, file := range toRemove {
+		df := filepath.Join(*oldDir, file)
+		fmt.Println(df)
 	}
 
 	fmt.Println("Finalizado")
