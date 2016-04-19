@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"io"
+	"log"
 
 	"github.com/rvillablanca/godiff/diff"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -23,7 +24,7 @@ func main() {
 
 	err := validateDirectories()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
@@ -80,7 +81,7 @@ func main() {
 		v2 := filepath.Join(*newDir, v)
 		equal, err := diff.CompareFiles(v1, v2)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal("Error al comparar archivos viejos y nuevos ", err)
 			return
 		}
 		if !equal {
@@ -94,12 +95,12 @@ func main() {
 		dstdirs := filepath.Dir(dstf)
 		err = os.MkdirAll(dstdirs, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal("Error al crear directorios para copiar los archivos nuevos ", err)
 			return
 		}
 		err = Copy(srcf, dstf)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal("Error al copiar archivo ", srcf, err)
 			return
 		}
 	}
@@ -110,20 +111,29 @@ func main() {
 		dstdirs := filepath.Dir(dstf)
 		err = os.MkdirAll(dstdirs, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal("Error al crear directorios para copiar los archivos a reemplazar ", err)
 			return
 		}
 		err = Copy(srcf, dstf)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal("Error al copiar archivo ", srcf, err)
 			return
 		}
 	}
-	fmt.Println("Eliminar los archivos:")
-	for _, file := range toRemove {
-		df := filepath.Join(*oldDir, file)
-		fmt.Println(df)
+	//Se crea archivo con lista de archivos a eliminar sólo si aplica
+	if len(toRemove) > 0 {
+		fileName := filepath.Join(*destDir, "to_delete.txt")
+		f, err := os.Create(fileName)
+		if (err != nil) {
+			log.Fatal("Error al crear lista de archivos a eliminar ", err)
+		}
+		defer f.Close()
+		for _, file := range toRemove {
+			df := filepath.Join(*oldDir, file)
+			f.WriteString(df + "\n")
+		}
 	}
+	
 
 	fmt.Println("Finalizado")
 }
@@ -155,7 +165,7 @@ func validateDirectories() (err error) {
 	return nil
 }
 
-func checkDirectories(dirs ...string) (bool, error) {
+func checkDirectories(dirs... string) (bool, error) {
 	for _, v := range dirs {
 		exist, err := checkDirectory(v)
 		if err != nil || !exist {
