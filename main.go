@@ -37,6 +37,7 @@ func main() {
 
 	toAdd := []string{}
 	toRemove := []string{}
+	toReplace := []string{}
 
 	//Archivos a eliminar
 	oldIteration:
@@ -72,8 +73,6 @@ func main() {
 			}
 		}
 	}
-
-	toReplace := []string{}
 
 	fmt.Println("Comparando archivos...")
 	for _, v := range oldFiles {
@@ -129,9 +128,9 @@ func main() {
 		}
 		defer f.Close()
 		for _, file := range toRemove {
-			df := filepath.Join(*oldDir, file)
-			f.WriteString(df + "\n")
+			f.WriteString(file + "\n")
 		}
+		fmt.Println("Se deben eliminar los archivos descritos en to_delete.txt")
 	}
 	
 
