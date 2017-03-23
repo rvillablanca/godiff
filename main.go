@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"io"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/rvillablanca/godiff/diff"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -15,7 +15,7 @@ import (
 var (
 	oldDir  = kingpin.Arg("old", "Fuentes antiguos").Required().String()
 	newDir  = kingpin.Arg("new", "Fuentes nuevos").Required().String()
-	destDir = kingpin.Arg("dest", "Destino del parche").Required().String()
+	destDir = kingpin.Arg("dest", "Destino de fuentes con tags").Required().String()
 )
 
 func main() {
@@ -40,7 +40,7 @@ func main() {
 	toReplace := []string{}
 
 	//Archivos a eliminar
-	oldIteration:
+oldIteration:
 	for _, oldFile := range oldFiles {
 		for _, newFile := range newFiles {
 			if newFile == oldFile {
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	//Archivos que hay que agregar
-	newIteration:
+newIteration:
 	for _, newFile := range newFiles {
 		for _, oldFile := range oldFiles {
 			if newFile == oldFile {
@@ -62,7 +62,7 @@ func main() {
 	}
 
 	//Se quitan los archivos a eliminar de la lista de archivos a comparar.
-	loop:
+loop:
 	for i := 0; i < len(oldFiles); i++ {
 		old := oldFiles[i]
 		for _, rem := range toRemove {
@@ -88,7 +88,7 @@ func main() {
 		}
 	}
 
-  	for _, file := range toAdd {
+	for _, file := range toAdd {
 		srcf := filepath.Join(*newDir, file)
 		dstf := filepath.Join(*destDir, file)
 		dstdirs := filepath.Dir(dstf)
@@ -123,7 +123,7 @@ func main() {
 	if len(toRemove) > 0 {
 		fileName := filepath.Join(*destDir, "to_delete.txt")
 		f, err := os.Create(fileName)
-		if (err != nil) {
+		if err != nil {
 			log.Fatal("Error al crear lista de archivos a eliminar ", err)
 		}
 		defer f.Close()
@@ -132,7 +132,6 @@ func main() {
 		}
 		fmt.Println("Se deben eliminar los archivos descritos en to_delete.txt")
 	}
-	
 
 	fmt.Println("Finalizado")
 }
@@ -164,7 +163,7 @@ func validateDirectories() (err error) {
 	return nil
 }
 
-func checkDirectories(dirs... string) (bool, error) {
+func checkDirectories(dirs ...string) (bool, error) {
 	for _, v := range dirs {
 		exist, err := checkDirectory(v)
 		if err != nil || !exist {
@@ -190,26 +189,26 @@ func checkDirectory(dirname string) (result bool, err error) {
 }
 
 func Copy(src, dst string) error {
-  src_file, err := os.Open(src)
-  if err != nil {
-    return err
-  }
-  defer src_file.Close()
+	src_file, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer src_file.Close()
 
-  src_file_stat, err := src_file.Stat()
-  if err != nil {
-    return err
-  }
+	src_file_stat, err := src_file.Stat()
+	if err != nil {
+		return err
+	}
 
-  if !src_file_stat.Mode().IsRegular() {
-    return fmt.Errorf("%s is not a regular file", src)
-  }
+	if !src_file_stat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
 
-  dst_file, err := os.Create(dst)
-  if err != nil {
-    return err
-  }
-  defer dst_file.Close()
-  _, err = io.Copy(dst_file, src_file)
+	dst_file, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dst_file.Close()
+	_, err = io.Copy(dst_file, src_file)
 	return err
 }

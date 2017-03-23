@@ -60,7 +60,7 @@ func FindFilesIn(list []string, dirname string) []string {
 		if !info.IsDir() {
 			p, err := filepath.Rel(dirname, path)
 			if err == nil {
-					list = append(list, p)
+				list = append(list, p)
 			}
 			return err
 		}
