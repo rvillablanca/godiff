@@ -28,12 +28,9 @@ func main() {
 		return
 	}
 
-	oldFiles := []string{}
-	newFiles := []string{}
-
 	fmt.Println("Buscando archivos en directorios...")
-	oldFiles = diff.FindFilesIn(oldFiles, *oldDir)
-	newFiles = diff.FindFilesIn(newFiles, *newDir)
+	var oldFiles = diff.FindFilesIn(*oldDir)
+	var newFiles = diff.FindFilesIn(*newDir)
 
 	toAdd := []string{}
 	toRemove := []string{}
@@ -78,8 +75,8 @@ loop:
 	for _, v := range oldFiles {
 		v1 := filepath.Join(*oldDir, v)
 		v2 := filepath.Join(*newDir, v)
-		equal, err := diff.CompareFiles(v1, v2)
-		if err != nil {
+		equal, compError := diff.CompareFiles(v1, v2)
+		if compError != nil {
 			log.Fatal("Error al comparar archivos viejos y nuevos ", err)
 			return
 		}
@@ -97,7 +94,7 @@ loop:
 			log.Fatal("Error al crear directorios para copiar los archivos nuevos ", err)
 			return
 		}
-		err = Copy(srcf, dstf)
+		err = copy(srcf, dstf)
 		if err != nil {
 			log.Fatal("Error al copiar archivo ", srcf, err)
 			return
@@ -113,7 +110,7 @@ loop:
 			log.Fatal("Error al crear directorios para copiar los archivos a reemplazar ", err)
 			return
 		}
-		err = Copy(srcf, dstf)
+		err = copy(srcf, dstf)
 		if err != nil {
 			log.Fatal("Error al copiar archivo ", srcf, err)
 			return
@@ -188,27 +185,27 @@ func checkDirectory(dirname string) (result bool, err error) {
 	return
 }
 
-func Copy(src, dst string) error {
-	src_file, err := os.Open(src)
+func copy(src, dst string) error {
+	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	defer src_file.Close()
+	defer srcFile.Close()
 
-	src_file_stat, err := src_file.Stat()
+	srcFileStat, err := srcFile.Stat()
 	if err != nil {
 		return err
 	}
 
-	if !src_file_stat.Mode().IsRegular() {
+	if !srcFileStat.Mode().IsRegular() {
 		return fmt.Errorf("%s is not a regular file", src)
 	}
 
-	dst_file, err := os.Create(dst)
+	dstFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer dst_file.Close()
-	_, err = io.Copy(dst_file, src_file)
+	defer dstFile.Close()
+	_, err = io.Copy(dstFile, srcFile)
 	return err
 }

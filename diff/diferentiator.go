@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 )
 
+// CompareFiles compara entre 2 archivos e indica si son iguales
 func CompareFiles(file1, file2 string) (bool, error) {
 	size := 1024 * 4
 	buffer1, buffer2 := make([]byte, size), make([]byte, size)
@@ -51,7 +52,9 @@ func CompareFiles(file1, file2 string) (bool, error) {
 	}
 }
 
-func FindFilesIn(list []string, dirname string) []string {
+// FindFilesIn Busca archivos en el directorio dirname y retorna lista con nombres
+func FindFilesIn(dirname string) []string {
+	var list []string
 	walkFunc := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
