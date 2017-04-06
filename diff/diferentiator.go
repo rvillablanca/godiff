@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // CompareFiles compara entre 2 archivos e indica si son iguales
@@ -62,10 +63,39 @@ func FindFilesIn(dirname string) []string {
 
 		if !info.IsDir() {
 			p, err := filepath.Rel(dirname, path)
-			if err == nil {
-				list = append(list, p)
+			if err != nil {
+				return err
 			}
+			list = append(list, p)
+			return nil
+		}
+		return nil
+	}
+
+	filepath.Walk(dirname, walkFunc)
+	return list
+}
+
+// FindFilesFiltering busca archivos ignorando los subdirectorios ignored
+func FindFilesFiltering(dirname string, ignored []string) []string {
+	var list []string
+	walkFunc := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
 			return err
+		}
+
+		if !info.IsDir() {
+			for _, skip := range ignored {
+				if strings.Contains(path, skip) {
+					return nil
+				}
+			}
+			p, err := filepath.Rel(dirname, path)
+			if err != nil {
+				return err
+			}
+			list = append(list, p)
+			return nil
 		}
 		return nil
 	}
