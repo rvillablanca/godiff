@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -9,18 +10,25 @@ import (
 	"path/filepath"
 
 	"github.com/rvillablanca/godiff/diff"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
-	oldDir  = kingpin.Arg("old", "Fuentes antiguos").Required().String()
-	newDir  = kingpin.Arg("new", "Fuentes nuevos").Required().String()
-	destDir = kingpin.Arg("dest", "Destino de fuentes con tags").Required().String()
+	oldDir  = flag.String("old", "", "Old sources")
+	newDir  = flag.String("new", "", "New sources")
+	destDir = flag.String("dest", "", "Destination path")
 )
+
+func validateFlags() {
+	if *oldDir == "" || *newDir == "" || *destDir == "" {
+		flag.PrintDefaults()
+		os.Exit(-1)
+	}
+}
 
 func main() {
 
-	kingpin.Parse()
+	flag.Parse()
+	validateFlags()
 
 	err := validateDirectories()
 	if err != nil {
