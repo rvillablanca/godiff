@@ -4,5 +4,6 @@ pipeline:
   build:
     image: golang:latest
     commands:
+      - echo "Estoy en $(pwd)"
       - go get ./...
       - go test
