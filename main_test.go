@@ -24,7 +24,7 @@ loop:
 
 	fmt.Println(urlList)
 
-	if urlList[0] != "def" || urlList[1] != "ghi" {
+	if urlList[0] != "deff" || urlList[1] != "ghi" {
 		t.Error("Error de iteración", urlList)
 	}
 }
