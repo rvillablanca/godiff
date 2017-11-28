@@ -1,10 +1,10 @@
 workspace:
-  base: /go
-  path: src/github.com/rvillablanca/godiff
+  base: /go/src/github.com/rvillablanca/godiff
+  #path: src/github.com/rvillablanca/godiff
 pipeline:
   build:
     image: golang:latest
     commands:
-      - echo "Estoy en $(pwd)"
+      - pwd
       - go get ./...
       - go test
