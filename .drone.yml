@@ -1,6 +1,5 @@
 workspace:
-  base: /go
-  path: src/github.com/rvillablanca/godiff
+  base: /go/github.com/rvillablanca/godiff
 pipeline:
   build:
     image: golang:latest
