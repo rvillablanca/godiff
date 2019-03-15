@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -13,36 +12,35 @@ import (
 )
 
 var (
-	oldDir  = flag.String("old", "", "Old sources")
-	newDir  = flag.String("new", "", "New sources")
-	destDir = flag.String("dest", "", "Destination path")
+	oldDir  = ""
+	newDir  = ""
+	destDir = ""
 )
-
-func validateFlags() {
-	if *oldDir == "" || *newDir == "" || *destDir == "" {
-		flag.PrintDefaults()
-		os.Exit(-1)
-	}
-}
 
 func main() {
 
-	flag.Parse()
-	validateFlags()
+	if len(os.Args) != 3 {
+		fmt.Fprint(os.Stderr, "Número de argumentos incorrectos")
+		return
+	}
+
+	oldDir = os.Args[0]
+	newDir = os.Args[1]
+	destDir = os.Args[2]
 
 	err := validateDirectories()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprint(os.Stderr, err)
 		return
 	}
 
 	fmt.Println("Buscando archivos en directorios...")
-	var oldFiles = diff.FindFilesIn(*oldDir)
-	var newFiles = diff.FindFilesIn(*newDir)
+	var oldFiles = diff.FindFilesIn(oldDir)
+	var newFiles = diff.FindFilesIn(newDir)
 
-	toAdd := []string{}
-	toRemove := []string{}
-	toReplace := []string{}
+	toAdd := make([]string, 0)
+	toRemove := make([]string, 0)
+	toReplace := make([]string, 0)
 
 	//Archivos a eliminar
 oldIteration:
@@ -81,8 +79,8 @@ loop:
 
 	fmt.Println("Comparando archivos...")
 	for _, v := range oldFiles {
-		v1 := filepath.Join(*oldDir, v)
-		v2 := filepath.Join(*newDir, v)
+		v1 := filepath.Join(oldDir, v)
+		v2 := filepath.Join(newDir, v)
 		equal, compError := diff.CompareFiles(v1, v2)
 		if compError != nil {
 			log.Fatal("Error al comparar archivos viejos y nuevos ", err)
@@ -94,8 +92,8 @@ loop:
 	}
 
 	for _, file := range toAdd {
-		srcf := filepath.Join(*newDir, file)
-		dstf := filepath.Join(*destDir, file)
+		srcf := filepath.Join(newDir, file)
+		dstf := filepath.Join(destDir, file)
 		dstdirs := filepath.Dir(dstf)
 		err = os.MkdirAll(dstdirs, os.ModePerm)
 		if err != nil {
@@ -110,8 +108,8 @@ loop:
 	}
 
 	for _, file := range toReplace {
-		srcf := filepath.Join(*newDir, file)
-		dstf := filepath.Join(*destDir, file)
+		srcf := filepath.Join(newDir, file)
+		dstf := filepath.Join(destDir, file)
 		dstdirs := filepath.Dir(dstf)
 		err = os.MkdirAll(dstdirs, os.ModePerm)
 		if err != nil {
@@ -126,7 +124,7 @@ loop:
 	}
 	//Se crea archivo con lista de archivos a eliminar sólo si aplica
 	if len(toRemove) > 0 {
-		fileName := filepath.Join(*destDir, "to_delete.txt")
+		fileName := filepath.Join(destDir, "to_delete.txt")
 		f, err := os.Create(fileName)
 		if err != nil {
 			log.Fatal("Error al crear lista de archivos a eliminar ", err)
@@ -142,19 +140,19 @@ loop:
 }
 
 func validateDirectories() (err error) {
-	dir1, err := filepath.Abs(*oldDir)
+	dir1, err := filepath.Abs(oldDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar el directorio" + *oldDir)
+		err = errors.New("no fue posible verificar el directorio" + oldDir)
 		return
 	}
-	dir2, err := filepath.Abs(*newDir)
+	dir2, err := filepath.Abs(newDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar el directorio" + *newDir)
+		err = errors.New("no fue posible verificar el directorio" + newDir)
 		return
 	}
-	dir3, err := filepath.Abs(*destDir)
+	dir3, err := filepath.Abs(destDir)
 	if err != nil {
-		err = errors.New("No fue posible verificar el directorio" + *destDir)
+		err = errors.New("no fue posible verificar el directorio" + destDir)
 		return
 	}
 
@@ -162,7 +160,7 @@ func validateDirectories() (err error) {
 	if err != nil {
 		return
 	} else if !valid {
-		err = errors.New("Todos los argumentos deben ser directorios")
+		err = errors.New("todos los argumentos deben ser directorios")
 		return
 	}
 	return nil
@@ -172,7 +170,7 @@ func checkDirectories(dirs ...string) (bool, error) {
 	for _, v := range dirs {
 		exist, err := checkDirectory(v)
 		if err != nil || !exist {
-			return false, fmt.Errorf("Directorio %v no existe", v)
+			return false, fmt.Errorf("directorio %v no existe", v)
 		}
 	}
 	return true, nil
