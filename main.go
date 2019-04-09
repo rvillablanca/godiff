@@ -19,14 +19,14 @@ var (
 
 func main() {
 
-	if len(os.Args) != 3 {
+	if len(os.Args) != 4 {
 		fmt.Fprint(os.Stderr, "Número de argumentos incorrectos")
 		return
 	}
 
-	oldDir = os.Args[0]
-	newDir = os.Args[1]
-	destDir = os.Args[2]
+	oldDir = os.Args[1]
+	newDir = os.Args[2]
+	destDir = os.Args[3]
 
 	err := validateDirectories()
 	if err != nil {
