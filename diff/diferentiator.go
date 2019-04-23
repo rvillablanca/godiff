@@ -2,7 +2,6 @@ package diff
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -90,7 +89,6 @@ func FindFilesFiltering(dirname string, ignored []string) []string {
 		if !info.IsDir() {
 			for _, skip := range ignored {
 				if strings.Contains(path, skip) {
-					fmt.Printf("skipping %v\n", path)
 					return nil
 				}
 			}
