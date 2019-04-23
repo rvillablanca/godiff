@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var SkipKnownFolders = []string{"nbproject", ".git", ".svn"}
+var SkipKnownFolders = []string{"nbproject", ".git", ".svn", ".ant-targets-build.xml"}
 
 // CompareFiles compara entre 2 archivos e indica si son iguales
 func CompareFiles(file1, file2 string) (bool, error) {
