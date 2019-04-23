@@ -35,8 +35,8 @@ func main() {
 	}
 
 	fmt.Println("Buscando archivos en directorios...")
-	var oldFiles = diff.FindFilesIn(oldDir)
-	var newFiles = diff.FindFilesIn(newDir)
+	var oldFiles = diff.FindFilesFiltering(oldDir, diff.SkipKnownFolders)
+	var newFiles = diff.FindFilesFiltering(newDir, diff.SkipKnownFolders)
 
 	toAdd := make([]string, 0)
 	toRemove := make([]string, 0)
@@ -61,6 +61,11 @@ newIteration:
 				continue newIteration
 			}
 		}
+
+		if diff.ShouldSkip(newFile, diff.SkipKnownFolders) {
+			continue newIteration
+		}
+
 		toAdd = append(toAdd, newFile)
 	}
 
@@ -122,6 +127,7 @@ loop:
 			return
 		}
 	}
+
 	//Se crea archivo con lista de archivos a eliminar sólo si aplica
 	if len(toRemove) > 0 {
 		fileName := filepath.Join(destDir, "to_delete.txt")

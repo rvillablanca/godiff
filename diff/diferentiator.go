@@ -2,11 +2,14 @@ package diff
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+var SkipKnownFolders = []string{"nbproject", ".git", ".svn"}
 
 // CompareFiles compara entre 2 archivos e indica si son iguales
 func CompareFiles(file1, file2 string) (bool, error) {
@@ -87,6 +90,7 @@ func FindFilesFiltering(dirname string, ignored []string) []string {
 		if !info.IsDir() {
 			for _, skip := range ignored {
 				if strings.Contains(path, skip) {
+					fmt.Printf("skipping %v\n", path)
 					return nil
 				}
 			}
@@ -102,4 +106,13 @@ func FindFilesFiltering(dirname string, ignored []string) []string {
 
 	filepath.Walk(dirname, walkFunc)
 	return list
+}
+
+func ShouldSkip(path string, ignored []string) bool {
+	for _, skip := range ignored {
+		if strings.Contains(path, skip) {
+			return true
+		}
+	}
+	return false
 }
