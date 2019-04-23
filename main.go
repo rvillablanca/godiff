@@ -130,16 +130,16 @@ loop:
 
 	//Se crea archivo con lista de archivos a eliminar sólo si aplica
 	if len(toRemove) > 0 {
-		fileName := filepath.Join(destDir, "to_delete.txt")
+		fileName := filepath.Join(destDir, "to_delete.sh")
 		f, err := os.Create(fileName)
 		if err != nil {
 			log.Fatal("Error al crear lista de archivos a eliminar ", err)
 		}
 		defer f.Close()
 		for _, file := range toRemove {
-			f.WriteString(file + "\n")
+			f.WriteString("rm " + file + "\n")
 		}
-		fmt.Println("Se deben eliminar los archivos descritos en to_delete.txt")
+		fmt.Println("Se deben eliminar los archivos descritos en to_delete.sh")
 	}
 
 	fmt.Println("Finalizado")
