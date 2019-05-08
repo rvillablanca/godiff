@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/rvillablanca/godiff/internal/pkg/utils"
 )
 
 var SkipKnownFolders = []string{"nbproject", ".git", ".svn", ".ant-targets-build.xml"}
@@ -19,13 +21,13 @@ func CompareFiles(file1, file2 string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer f1.Close()
+	defer utils.CloseQuietly(f1)
 
 	f2, err := os.Open(file2)
 	if err != nil {
 		return false, err
 	}
-	defer f2.Close()
+	defer utils.CloseQuietly(f2)
 
 	for {
 		// Si hay error, se retorna
@@ -74,7 +76,7 @@ func FindFilesIn(dirname string) []string {
 		return nil
 	}
 
-	filepath.Walk(dirname, walkFunc)
+	_ = filepath.Walk(dirname, walkFunc)
 	return list
 }
 
@@ -102,7 +104,7 @@ func FindFilesFiltering(dirname string, ignored []string) []string {
 		return nil
 	}
 
-	filepath.Walk(dirname, walkFunc)
+	_ = filepath.Walk(dirname, walkFunc)
 	return list
 }
 

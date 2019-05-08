@@ -1,6 +1,8 @@
 package diff
 
-import "testing"
+import (
+	"testing"
+)
 import "fmt"
 import "path"
 
