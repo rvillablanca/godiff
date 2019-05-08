@@ -7,18 +7,18 @@ import "fmt"
 import "path"
 
 func TestWalk(t *testing.T) {
-	fmt.Println("Ejecutando test walk...")
+	fmt.Println("executing walk test...")
 	list := FindFilesIn("./")
 	if len(list) == 0 {
-		t.Error("Error en test walk")
+		t.Error("error while executing walk test")
 	}
 }
 
 func TestAbs(t *testing.T) {
-	fmt.Println("Ejecutanto test de Abs...")
+	fmt.Println("executing test of abs ...")
 	falseExpected := path.IsAbs("./some/path")
 	trueExpected := path.IsAbs("/dev/nul")
 	if falseExpected == true || trueExpected == false {
-		t.Error("Fallo en test de Abs.")
+		t.Error("abs test failed")
 	}
 }

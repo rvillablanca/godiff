@@ -15,7 +15,7 @@ func Patch(oldDir, newDir, destDir string) error {
 		return err
 	}
 
-	fmt.Println("Buscando archivos en directorios...")
+	fmt.Println("looking for files...")
 	var oldFiles = FindFilesFiltering(oldDir, SkipKnownFolders)
 	var newFiles = FindFilesFiltering(newDir, SkipKnownFolders)
 
@@ -63,7 +63,7 @@ loop:
 		}
 	}
 
-	fmt.Println("Comparando archivos...")
+	fmt.Println("comparing files...")
 	for _, v := range oldFiles {
 		v1 := filepath.Join(oldDir, v)
 		v2 := filepath.Join(newDir, v)
@@ -118,9 +118,9 @@ loop:
 		for _, file := range toRemove {
 			_, _ = f.WriteString("rm " + file + "\n")
 		}
-		fmt.Println("Se deben eliminar los archivos descritos en to_delete.sh")
+		fmt.Println("files to be removed have been listed in to_delete.sh")
 	}
 
-	fmt.Println("Finalizado")
+	fmt.Println("path created")
 	return nil
 }
