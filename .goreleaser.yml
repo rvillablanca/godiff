@@ -1,0 +1,8 @@
+project_name: godiff
+builds:
+  - main: ./cmd/godiff/main.go
+    goos:
+      - linux
+      - darwin
+changelog:
+  skip: true
