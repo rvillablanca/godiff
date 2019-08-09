@@ -4,5 +4,6 @@ builds:
     goos:
       - linux
       - darwin
+      - windows
 changelog:
   skip: true
