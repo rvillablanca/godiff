@@ -24,3 +24,10 @@ install:
 release:
 	rm -rf ./dist
 	goreleaser
+
+platforms:
+	rm -rf dist
+	mkdir dist
+	GOOS=windows GOARCH=amd64 $(GOBUILD) -o dist/godiff.exe ./cmd/godiff
+	GOOS=linux GOARCH=amd64 $(GOBUILD) -o dist/godiff-linux ./cmd/godiff
+	GOOS=darwin GOARCH=amd64 $(GOBUILD) -o dist/godiff-darwin ./cmd/godiff
