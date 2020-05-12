@@ -1,6 +1,6 @@
 project_name: godiff
 builds:
-  - main: ./cmd/godiff/main.go
+  - main: .
     goos:
       - linux
       - darwin
