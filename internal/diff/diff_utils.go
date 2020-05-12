@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rvillablanca/godiff/internal/pkg/utils"
+	"github.com/rvillablanca/godiff/internal/utils"
 )
 
 var SkipKnownFolders = []string{"nbproject", ".git", ".svn", ".ant-targets-build.xml"}

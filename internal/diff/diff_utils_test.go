@@ -1,10 +1,10 @@
 package diff
 
 import (
+	"fmt"
+	"path"
 	"testing"
 )
-import "fmt"
-import "path"
 
 func TestWalk(t *testing.T) {
 	fmt.Println("executing walk test...")

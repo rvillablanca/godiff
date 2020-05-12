@@ -9,7 +9,7 @@ BINARY_NAME=godiff
 all: build
 
 build:
-	$(GOBUILD) -v ./cmd/godiff
+	$(GOBUILD) -v .
 
 test:
 	$(GOTEST) -v ./...

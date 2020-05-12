@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
-	"github.com/rvillablanca/godiff/internal/pkg/utils"
+	"github.com/rvillablanca/godiff/internal/utils"
 )
 
 func Patch(oldDir, newDir, destDir string) error {
