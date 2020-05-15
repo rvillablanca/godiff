@@ -19,7 +19,7 @@ clean:
 	rm -f $(BINARY_NAME)
 
 install:
-	$(GOINSTALL) ./cmd/godiff
+	$(GOINSTALL) -v .
 
 release:
 	rm -rf ./dist
